@@ -1,0 +1,41 @@
+{;; an example of an app's model spec
+ :domain-spec-data/spec-info-2018050800
+ {:txes [[
+
+          ;; spec generated from mysql schema or manually:
+          {:db/id "sitevisit spec" ;; easy string tempid
+           :entity/name "Site Visit"
+           :entity/ns :entity.ns/sitevisit
+           :entity/attrs
+           [{:attr/name "SiteVisit ID"
+             :attr/key :sitevisit/SiteVisitID
+             :attr/db.type :db.type/string
+             :attr/required? true
+             :attr/cardinality :one
+             :attr/toggles [:index]
+             :attr/description "a general ID field unique to this site visit"}
+            {:attr/name "Date"
+             :attr/key :sitevisit/SiteVisitDate
+             :attr/db.type :db.type/instant
+             :attr/required? true
+             :attr/cardinality :one
+             :attr/toggles [:index]
+             :attr/description "the date of this site visit"}]}]]}
+
+
+
+
+ ;; an example of a Datomic app schema auto-generated from the above spec
+ :add-app-schema/generated-from-above-2018090200
+ {:txes [#domain-spec/schema-tx
+             [[:sitevisit/SiteVisitID :one :string "a general ID field unique to this site visit"]
+              [:sitevisit/SiteVisitDate :one :instant "the date of this site visit"]]]}
+
+ ;; an example of the final app data that would conform to both the app spec and the datomic schema
+ :add-app-data/migrated-data-test-2018090200
+ {:txes [[
+          ;; migrated data
+          {:db/id "actual sitevisit record"
+           :entity/spec :entity.ns/sitevisit
+           :sitevisit/SiteVisitID "1"
+           :sitevisit/SiteVisitDate "2018-08-23T12:12:12"}]]}}
