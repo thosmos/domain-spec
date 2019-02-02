@@ -1,0 +1,148 @@
+[{:entity/ns    :entity.ns/entity,
+  :entity/name  "Entity"
+  :entity/pks   [:entity/ns]
+  :entity/doc   "The entity spec for the entity spec -> so meta"
+  :entity/attrs [{:attr/key         :entity/ns,
+                  :attr/type        :keyword,
+                  :attr/cardinality :one,
+                  :attr/identity   true,
+                  :attr/doc         "unique keyword for this spec like -> :entity.ns/sitevisit"}
+                 {:attr/key         :entity/name,
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "A display name"}
+                 {:attr/key         :entity/doc,
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "documentation about this entity"}
+                 {:attr/key         :entity/prnFn,
+                  :attr/gql         "prnFn"
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "a function with the entity as its arg for printing this entity"}
+                 {:attr/key         :entity/summaryKeys,
+                  :attr/gql         "summaryKeys"
+                  :attr/type        :keyword,
+                  :attr/cardinality :many,
+                  :attr/doc         "a subset of this entity's attrs to display in a summary list"}
+                 {:attr/key         :entity/pks,
+                  :attr/type        :keyword,
+                  :attr/cardinality :many,
+                  :attr/doc         "list of attribute keywords that collectively act as a unique constraint for this entity"}
+                 {:attr/key         :entity/compoundKey,
+                  :attr/gql         "compoundKey"
+                  :attr/type        :keyword,
+                  :attr/cardinality :one,
+                  :attr/identity   true,
+                  :attr/doc         "an optional identity key whose value is composed of multiple primary keys"}
+                 {:attr/key         :entity/attrs,
+                  :attr/type        :ref,
+                  :attr/ref         {:entity/ns :entity.ns/attr}
+                  :attr/cardinality :many,
+                  :attr/component  true,
+                  :attr/doc         "attribute specs for this entity"}]}
+ {:entity/ns    :entity.ns/attr,
+  :entity/name  "Attribute"
+  :entity/pks   [:attr/key]
+  :entity/doc   "The entity spec for the attribute spec -> very meta"
+  :entity/attrs [{:attr/key         :attr/key,
+                  :attr/type        :keyword,
+                  :attr/cardinality :one,
+                  :attr/identity   true,
+                  :attr/doc         "the datomic attribute keyword name -> :<entity-ns>/<attr-key> -> :sitevisit/SiteVisitDate"}
+                 {:attr/key         :attr/type,
+                  :attr/type        :keyword,
+                  :attr/cardinality :one,
+                  :attr/doc         "#{:keyword :string :boolean :long :bigint :float :double :bigdec :ref :instant :uuid :uri :bytes}"}
+                 {:attr/key         :attr/cardinality,
+                  :attr/type        :keyword,
+                  :attr/cardinality :one,
+                  :attr/doc         "#{:one :many}"}
+                 {:attr/key         :attr/name,
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "a display name"}
+                 {:attr/key         :attr/ref,
+                  :attr/type        :ref,
+                  :attr/cardinality :one,
+                  :attr/doc         "a DB ref to the entity spec for the target type of this ref attribute, i.e. Foreign Key"}
+                 ;{:attr/key         :attr/ref-type,
+                 ; :attr/type        :keyword,
+                 ; :attr/cardinality :one,
+                 ; :attr/doc         "a keyword that matches the :entity/ns for the target entity type of this ref attribute, i.e. Foreign Key"}
+                 {:attr/key         :attr/identity,
+                  :attr/gql        "isIdentity"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "is this an identity attribute?"}
+                 {:attr/key         :attr/unique,
+                  :attr/gql        "isUnique"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "is this a unique attribute?"}
+                 {:attr/key         :attr/primary,
+                  :attr/gql        "isPrimary"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "is this a primary key?"}
+                 {:attr/key         :attr/required,
+                  :attr/gql         "isRequired"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "is this attribute required?"}
+                 {:attr/key         :attr/component,
+                  :attr/gql         "isComponent"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "is this a component attribute?"}
+                 {:attr/key         :attr/noHistory,
+                  :attr/gql         "noHistory"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "skip keeping history in datomic?"}
+                 {:attr/key         :attr/fulltext,
+                  :attr/gql         "isFulltext"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "index full text?"}
+                 {:attr/key         :attr/derived,
+                  :attr/gql         "isDerived"
+                  :attr/type        :boolean,
+                  :attr/cardinality :one,
+                  :attr/doc         "is this attribute a derived value?"}
+                 {:attr/key         :attr/deriveFn,
+                  :attr/gql         "deriveFn"
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "fn code for deriving this attr value"}
+                 {:attr/key         :attr/deriveAttrs,
+                  :attr/gql         "deriveAttrs"
+                  :attr/type        :keyword,
+                  :attr/cardinality :many,
+                  :attr/doc         "attrs of the parent entity that are used to derive this attr value"}
+                 {:attr/key         :attr/doc,
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "this attribute's doc string"}
+                 {:attr/key         :attr/decimals,
+                  :attr/type        :long,
+                  :attr/cardinality :one,
+                  :attr/doc         "number of decimals in this floating point value"}
+                 {:attr/key         :attr/strlen,
+                  :attr/type        :long,
+                  :attr/cardinality :one,
+                  :attr/doc         "number of chars in this string value"}
+                 {:attr/key         :attr/position,
+                  :attr/type        :long,
+                  :attr/cardinality :one,
+                  :attr/doc         "ordinal position - optional for visual ordering"}
+                 {:attr/key         :attr/nextAutoVal,
+                  :attr/gql         "nextAutoVal"
+                  :attr/type        :long,
+                  :attr/cardinality :one,
+                  :attr/noHistory   true,
+                  :attr/doc         "next auto-increment value. optional"}
+                 {:attr/key         :attr/gql,
+                  :attr/type        :string,
+                  :attr/cardinality :one,
+                  :attr/doc         "A GraphQL-friendly attribute name"}]}]

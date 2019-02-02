@@ -1,34 +1,36 @@
-[[:entity/ns :one :keyword :identity "unique keyword for this spec like -> :entity.ns/sitevisit"]
- [:entity/name :one :string "display name"]
- [:entity/doc :one :string "documentation about this entity"]
- ;[:entity/spec :one :keyword "a spec ns keyword on a reified entity to an entity spec -> {:entity/spec :entity.ns/sitevisit}"]
- [:entity/prn-fn :one :string "a function with the entity as its arg for printing this entity"]
- [:entity/prn-keys :many :keyword "a subset of this entity's attrs to display in lookup lists"]
- [:entity/pks :many :keyword "list of attribute keywords that collectively act as a unique constraint for this entity"]
- [:entity/compound-key :one :keyword "a single identity key whose value is composed of multiple primary keys"]
- [:entity/attrs :many :ref :component "attribute infos of :attr/xxx"]
+;; DEPRECATED - use spec-spec.edn
 
- [:attr/key :one :keyword :identity "the datomic attribute keyword name -> :<entity-ns>/<attr-key> -> :sitevisit/SiteVisitDate"]
- [:attr/name :one :string "a display name"]
- [:attr/cardinality :one :keyword "db.cardinality #{:one :many}"]
- [:attr/type :one :keyword "db.type #{:keyword :string :boolean :long :bigint :float :double :bigdec :ref :instant :uuid :uri :bytes}"]
- [:attr/toggles :many :keyword "toggles #{:unique :identity :index :fulltext :component :no-history}"]
- [:attr/doc :one :string "this attribute's doc string"]
- [:attr/unique? :one :boolean "is this a unique attribute?"]
- [:attr/decimals :one :long "number of decimals in this floating point value"]
- [:attr/strlen :one :long "number of chars in this string value"]
- [:attr/position :one :long "ordinal position"]
-
- ;; for :ref type
- [:attr/ref :one :ref "a ref to the entity spec record for the target type of this ref attribute, i.e. Foreign Key"]
-
- ;; primary key
- [:attr/primary? :one :boolean "is this a primary key?"]
- [:attr/next-auto-val :one :long :no-history "next auto-increment value. optional"]
-
- [:attr/required? :one :boolean "is this attribute required?"]
- [:attr/derived? :one :boolean "is this attribute a derived value?"]
-
- [:attr/schema-tx :one :string "schema-tx to create it. optional"]]
-
-
+;[[:entity/ns :one :keyword :identity "unique keyword for this spec like -> :entity.ns/sitevisit"]
+; [:entity/name :one :string "display name"]
+; [:entity/doc :one :string "documentation about this entity"]
+; ;[:entity/spec :one :keyword "a spec ns keyword on a reified entity to an entity spec -> {:entity/spec :entity.ns/sitevisit}"]
+; [:entity/prnFn :one :string "a function with the entity as its arg for printing this entity"]
+; [:entity/prnKeys :many :keyword "a subset of this entity's attrs to display in lookup lists"]
+; [:entity/pks :many :keyword "list of attribute keywords that collectively act as a unique constraint for this entity"]
+; [:entity/compoundKey :one :keyword "a single identity key whose value is composed of multiple primary keys"]
+; [:entity/attrs :many :ref :component "attribute infos of :attr/xxx"]
+;
+; [:attr/key :one :keyword :identity "the datomic attribute keyword name -> :<entity-ns>/<attr-key> -> :sitevisit/SiteVisitDate"]
+; [:attr/name :one :string "a display name"]
+; [:attr/cardinality :one :keyword "db.cardinality #{:one :many}"]
+; [:attr/type :one :keyword "db.type #{:keyword :string :boolean :long :bigint :float :double :bigdec :ref :instant :uuid :uri :bytes}"]
+; [:attr/toggles :many :keyword "toggles #{:unique :identity :index :fulltext :component :no-history}"]
+; [:attr/doc :one :string "this attribute's doc string"]
+; [:attr/unique :one :boolean "is this a unique attribute?"]
+; [:attr/decimals :one :long "number of decimals in this floating point value"]
+; [:attr/strlen :one :long "number of chars in this string value"]
+; [:attr/position :one :long "ordinal position"]
+;
+; ;; for :ref type
+; [:attr/ref :one :ref "a ref to the entity spec record for the target type of this ref attribute, i.e. Foreign Key"]
+;
+; ;; primary key
+; [:attr/primary :one :boolean "is this a primary key?"]
+; [:attr/nextAutoVal :one :long :no-history "next auto-increment value. optional"]
+;
+; [:attr/required :one :boolean "is this attribute required?"]
+; [:attr/derived :one :boolean "is this attribute a derived value?"]
+;
+; [:attr/schemaTx :one :string "schema-tx to create it. optional"]]
+;
+;

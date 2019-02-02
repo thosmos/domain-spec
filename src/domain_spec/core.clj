@@ -1,39 +1,89 @@
 (ns domain-spec.core
   (:require [clojure.tools.logging :as log :refer [debug info warn error]]
-            domain-spec.literals
+            [domain-spec.literals :as literals]
             [clojure.java.io :as io]
             [datomic.api :as d]
             [io.rkn.conformity :as c]
-            [datascript.core :as dt])
+            [datascript.core :as ds])
   (:import java.util.Date))
 
 (def uri "datomic:mem://test-domain-spec")
 
-;(d/create-database uri)
-
-(defonce cx (atom nil))
-
-(defn update-cx
-  ([] (update-cx uri))
+(defn cx
+  ([] (cx uri))
   ([uri]
    (d/create-database uri)
-   (reset! cx (d/connect uri))))
+   (d/connect uri)))
 
-(defn read-specs-datomic [filename]
+(defn load-schemas [filename]
   (clojure.edn/read-string
-    {:readers {'domain-spec/schema-tx #'domain-spec.literals/schema-tx}}
+    {:readers {'domain-spec/schema-tx #'literals/schema-tx}}
     (slurp (io/file filename))))
 
-(defn read-specs-datascript [filename]
+(defn load-schemas-ds [filename]
   (clojure.edn/read-string
-    {:readers {'domain-spec/schema-tx #'domain-spec.literals/schema-tx}}
+    {:readers {'domain-spec/schema-tx-ds #'literals/schema-tx-ds}}
     (slurp (io/file filename))))
+
+(defn specs->db-schema-terse [specs]
+  (vec
+    (apply concat
+      (for [{:keys [entity/attrs entity/pks entity/name]} specs]
+        (vec
+          (for [{:keys [attr/key attr/cardinality attr/type attr/primary attr/unique attr/identity attr/required
+                        attr/doc attr/component attr/noHistory]} attrs]
+            (vec
+              (concat
+                [key cardinality type]
+
+                (when identity
+                  [:identity])
+
+                (when component
+                  [:component])
+
+                (when noHistory
+                  [:noHistory])
+
+                ;(when primary?
+                ;  [:index])
+
+                (when (and
+                        (not= type :string)
+                        (not= type :ref)
+                        (not identity))
+                        ;(not primary?)
+                  [:index])
+
+                (when unique
+                  [:unique])
+
+                [(or doc "")]))))))))
+
+(defn spec-specs []
+  (c/read-resource "spec-spec.edn"))
 
 (defn new-specs-ds []
   (->
-    (c/read-resource "spec-schema.edn")
-    domain-spec.literals/schema-tx-ds
-    dt/create-conn))
+    (spec-specs)
+    specs->db-schema-terse
+    literals/schema-tx-ds
+    ds/create-conn))
+
+(defn sort-specs [specs]
+  (let [specs (for [spec specs]
+                (let [attrs (vec (sort-by :attr/name (:entity/attrs spec)))]
+                  (assoc spec :entity/attrs attrs)))
+        specs (vec (sort-by :entity/name specs))]
+    specs))
+
+(defn get-specs
+  "pull all entity and associated attribute specs from a datascript datasource"
+  [specs-ds]
+  (sort-specs
+    (ds/q '[:find [(pull ?e [*]) ...]
+            :where [?e :entity/ns]]
+      @specs-ds)))
 
 (defn get-schema [db attr]
   (d/q '[:find [(pull ?e [:db/ident * {:db/unique [*]} {:db/cardinality [:db/ident]} {:db/valueType [:db/ident :fressian/tag]}]) ...]
@@ -55,9 +105,9 @@
            [((comp not contains?) ?system-ns ?ns)]]
       db system-ns)))
 
-(defn datomic->simple-schema [db]
+(defn datomic->terse-schema [db]
   (debug "datomic->simple-schema")
-  (let [schemas   (get-schemas db)]
+  (let [schemas (get-schemas db)]
     (for [{:keys [db/ident db/unique db/valueType db/cardinality db/doc db/index db/fulltext db/noHistory db/isComponent] :as sch} schemas]
       (let [type   (keyword (name (:db/ident valueType)))
             card   (-> cardinality :db/ident name keyword)
@@ -78,13 +128,14 @@
           (conj :noHistory)
 
           isComponent
-          (conj :isComponent)
+          (conj :component)
 
           doc
-          (conj doc)
+          (conj doc))))))
 
-          )
-        ))))
+
+
+
 
 (comment
   (in-ns 'domain-spec.core)
@@ -98,8 +149,8 @@
   (defn empty-model-cx []
     (->
       (c/read-resource "spec-schema.edn")
-      domain-spec.literals/schema-tx-ds
-      dt/create-conn))
+      literals/schema-tx-ds
+      ds/create-conn))
 
 
   (def model
@@ -120,16 +171,15 @@
                      :attr/required?   true
                      :attr/cardinality :one
                      :attr/toggles     [:index]
-                     :attr/description "the date of this site visit"}
-                    ]
-      }])
+                     :attr/description "the date of this site visit"}]}])
+
+
 
 
   (def model-db
     "A DataScript database value, holding a representation of our Domain Model."
-    (dt/db-with
-      (dt/db (empty-model-cx))
+    (ds/db-with
+      (ds/db (empty-model-cx))
       ;; Composing DataScript transactions is as simple as that: concat
-      model))
+      model)))
 
-  )

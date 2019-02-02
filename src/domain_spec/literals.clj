@@ -6,7 +6,7 @@
 
 ;; Schema literals
 ;; ---------------
-(def accepted-schema-toggles #{:unique :identity :index :fulltext :component :no-history})
+(def accepted-schema-toggles #{:unique :identity :index :fulltext :component :noHistory})
 (def accepted-kinds          #{:keyword :string :boolean :long :bigint :float :double :bigdec :ref :instant :uuid :uri :bytes})
 (def accepted-cards          #{:one :many})
 
@@ -56,10 +56,44 @@
                            :fulltext   {:db/fulltext true
                                         :db/index    true}
                            :component  {:db/isComponent true}
-                           :no-history {:db/noHistory true}
+                           :noHistory {:db/noHistory true}
                            nil)))
         {}
         opt-toggles))))
+
+(defn parse-schema-vec->spec
+  [s-vec]
+  (schema-assert (every? keyword? (butlast s-vec))
+    "All of _attribute-name_, _cardinality_, _type_, and _toggles_ must be Clojure keywords."
+    s-vec)
+  (let [doc-string            (last s-vec)
+        ;[ident card kind & _] (take 3 s-vec)
+        [ident card kind & _] (take 3 s-vec)
+        opt-toggles           (take-while keyword? (drop 3 s-vec))]
+    (schema-assert (string? doc-string) "The last thing in the vector must be a docstring." s-vec)
+    (schema-assert (every? #(contains? accepted-schema-toggles %) opt-toggles)
+      (str "Short schema toggles must be taken from " accepted-schema-toggles) opt-toggles)
+    (schema-assert (contains? accepted-kinds kind) (str "The value type must be one of " accepted-kinds) kind)
+    (schema-assert (contains? accepted-cards card) (str "The cardinality must be one of " accepted-cards) card)
+    (let [entity-ns (keyword "entity.ns" (namespace ident))
+          attr-map {:attr/key ident
+                    :attr/doc doc-string
+                    :attr/type kind
+                    :attr/cardinality card}
+          attr-map (if opt-toggles
+                     (merge
+                       attr-map
+                       {:attr/toggles (vec opt-toggles)}
+                       (reduce (fn [m opt]
+                                 (merge m (case opt
+                                            :unique {:attr/unique true}
+                                            :identity {:attr/identity true}
+                                            nil)))
+                         {}
+                         opt-toggles))
+                     attr-map)]
+      {:entity/ns    entity-ns
+       :entity/attrs [attr-map]})))
 
 (defn parse-schema-vec-ds
   [s-vec]
@@ -85,6 +119,11 @@
   (schema-assert (vector? form) "The top level must be a vector." form)
   (schema-assert (every? vector? form) "The top level vector must only contain other vectors" form)
   (mapv parse-schema-vec form))
+
+(defn schema-tx->spec [form]
+  (schema-assert (vector? form) "The top level must be a vector." form)
+  (schema-assert (every? vector? form) "The top level vector must only contain other vectors" form)
+  (mapv parse-schema-vec->spec form))
 
 (defn schema-tx-ds [form]
   (schema-assert (vector? form) "The top level must be a vector." form)

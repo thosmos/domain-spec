@@ -1,24 +1,29 @@
-# Change Log
-All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
+# [domain-spec](https://github.com/thosmos/domain-spec)
 
 ## [Unreleased]
-### Changed
-- Add a new arity to `make-widget-async` to provide a different widget shape.
+### Planned
 
-## [0.1.1] - 2018-09-02
 ### Changed
-- Documentation on how to make the widgets.
-
 ### Removed
-- `make-widget-sync` - we're all async, all the time.
-
+- Deprecated spec-schemas.edn
 ### Fixed
-- Fixed widget maker to keep working when daylight savings switches over.
+### Added
+
+## [0.1.1] - 2019-02-02
+### Changed
+- definitely breaking changes ...
+- use specs to define specs ... so meta
+- Removed "is" prefix and "?" suffix from attr spec keys: identity, unique, primary, required, fulltext, derived, component
+- changed `attr/copund-key` to `attr/compoundKey` and similar other removals of "-"
 
 ## 0.1.0 - 2018-09-02
 ### Added
-- Files from the new template.
-- Widget maker public API - `make-widget-sync`.
+- intitial checkin ...
+- basic ability to convert between domain-spec and datomic(-terse) schema formats
+- used as the basis for [riverdb.org graphql server](https://gitlab.com/riverdb/riverdb-graphql) auto-generated GraphQL queries
 
-[Unreleased]: https://github.com/your-name/domain-spec/compare/0.1.1...HEAD
-[0.1.1]: https://github.com/your-name/domain-spec/compare/0.1.0...0.1.1
+[Unreleased]: https://github.com/thosmos/domain-spec/compare/0.1.1...HEAD
+[0.1.1]: https://github.com/thosmos/domain-spec/compare/0.1.0...0.1.1
+
+#### Change Log
+All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
