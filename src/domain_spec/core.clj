@@ -52,7 +52,7 @@
                         (not= type :string)
                         (not= type :ref)
                         (not identity))
-                        ;(not primary?)
+                  ;(not primary?)
                   [:index])
 
                 (when unique
@@ -84,6 +84,26 @@
     (ds/q '[:find [(pull ?e [*]) ...]
             :where [?e :entity/ns]]
       @specs-ds)))
+
+(defn coll->map
+  ([key-fn coll]
+   (coll->map key-fn identity coll))
+  ([key-fn val-fn coll]
+   (into (sorted-map)
+     (for [m coll]
+       [(key-fn m) (val-fn m)]))))
+
+(defn get-spec-map
+  "pull all entity and associated attribute specs from a datascript datasource into a nested map"
+  [specs-ds]
+  (let [ents (ds/q '[:find [(pull ?e [*]) ...]
+                     :where [?e :entity/ns]]
+               @specs-ds)]
+    (->> ents
+      (coll->map :entity/ns
+        (fn [ent]
+          (update ent :entity/attrs #(coll->map :attr/key %)))))))
+
 
 (defn get-schema [db attr]
   (d/q '[:find [(pull ?e [:db/ident * {:db/unique [*]} {:db/cardinality [:db/ident]} {:db/valueType [:db/ident :fressian/tag]}]) ...]

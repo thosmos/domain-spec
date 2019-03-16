@@ -16,12 +16,12 @@
                   :attr/cardinality :one,
                   :attr/doc         "documentation about this entity"}
                  {:attr/key         :entity/prnFn,
-                  :attr/gql         "prnFn"
+                  ;:attr/gql         "prnFn"
                   :attr/type        :string,
                   :attr/cardinality :one,
                   :attr/doc         "a function with the entity as its arg for printing this entity"}
                  {:attr/key         :entity/summaryKeys,
-                  :attr/gql         "summaryKeys"
+                  ;:attr/gql         "summaryKeys"
                   :attr/type        :keyword,
                   :attr/cardinality :many,
                   :attr/doc         "a subset of this entity's attrs to display in a summary list"}
@@ -30,7 +30,7 @@
                   :attr/cardinality :many,
                   :attr/doc         "list of attribute keywords that collectively act as a unique constraint for this entity"}
                  {:attr/key         :entity/compoundKey,
-                  :attr/gql         "compoundKey"
+                  ;:attr/gql         "compoundKey"
                   :attr/type        :keyword,
                   :attr/cardinality :one,
                   :attr/identity   true,
@@ -71,52 +71,52 @@
                  ; :attr/cardinality :one,
                  ; :attr/doc         "a keyword that matches the :entity/ns for the target entity type of this ref attribute, i.e. Foreign Key"}
                  {:attr/key         :attr/identity,
-                  :attr/gql        "isIdentity"
+                  ;:attr/gql        "identity"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "is this an identity attribute?"}
                  {:attr/key         :attr/unique,
-                  :attr/gql        "isUnique"
+                  ;:attr/gql        "unique"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "is this a unique attribute?"}
                  {:attr/key         :attr/primary,
-                  :attr/gql        "isPrimary"
+                  ;:attr/gql        "primary"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "is this a primary key?"}
                  {:attr/key         :attr/required,
-                  :attr/gql         "isRequired"
+                  ;:attr/gql         "required"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "is this attribute required?"}
                  {:attr/key         :attr/component,
-                  :attr/gql         "isComponent"
+                  ;:attr/gql         "component"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "is this a component attribute?"}
                  {:attr/key         :attr/noHistory,
-                  :attr/gql         "noHistory"
+                  ;:attr/gql         "noHistory"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "skip keeping history in datomic?"}
                  {:attr/key         :attr/fulltext,
-                  :attr/gql         "isFulltext"
+                  ;:attr/gql         "fulltext"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "index full text?"}
                  {:attr/key         :attr/derived,
-                  :attr/gql         "isDerived"
+                  ;:attr/gql         "derived"
                   :attr/type        :boolean,
                   :attr/cardinality :one,
                   :attr/doc         "is this attribute a derived value?"}
                  {:attr/key         :attr/deriveFn,
-                  :attr/gql         "deriveFn"
+                  ;:attr/gql         "deriveFn"
                   :attr/type        :string,
                   :attr/cardinality :one,
                   :attr/doc         "fn code for deriving this attr value"}
                  {:attr/key         :attr/deriveAttrs,
-                  :attr/gql         "deriveAttrs"
+                  ;:attr/gql         "deriveAttrs"
                   :attr/type        :keyword,
                   :attr/cardinality :many,
                   :attr/doc         "attrs of the parent entity that are used to derive this attr value"}
@@ -137,7 +137,7 @@
                   :attr/cardinality :one,
                   :attr/doc         "ordinal position - optional for visual ordering"}
                  {:attr/key         :attr/nextAutoVal,
-                  :attr/gql         "nextAutoVal"
+                  ;:attr/gql         "nextAutoVal"
                   :attr/type        :long,
                   :attr/cardinality :one,
                   :attr/noHistory   true,
