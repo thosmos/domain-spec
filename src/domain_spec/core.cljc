@@ -1,29 +1,30 @@
 (ns domain-spec.core
-  (:require [clojure.tools.logging :as log :refer [debug info warn error]]
-            [domain-spec.literals :as literals]
-            [clojure.java.io :as io]
-            [datomic.api :as d]
-            [io.rkn.conformity :as c]
-            [datascript.core :as ds])
-  (:import java.util.Date))
+  (:require
+    #?@(:clj
+        [[clojure.tools.logging :as log :refer [debug info warn error]]
+         [domain-spec.literals :as literals]
+         [clojure.java.io :as io]
+         [datomic.api :as d]
+         [io.rkn.conformity :as c]])
+    [datascript.core :as ds]))
 
-(def uri "datomic:mem://test-domain-spec")
+#?(:clj (def uri "datomic:mem://test-domain-spec"))
 
-(defn cx
-  ([] (cx uri))
-  ([uri]
-   (d/create-database uri)
-   (d/connect uri)))
+#?(:clj (defn cx
+          ([] (cx uri))
+          ([uri]
+           (d/create-database uri)
+           (d/connect uri))))
 
-(defn load-schemas [filename]
-  (clojure.edn/read-string
-    {:readers {'domain-spec/schema-tx #'literals/schema-tx}}
-    (slurp (io/file filename))))
+#?(:clj (defn load-schemas [filename]
+          (clojure.edn/read-string
+            {:readers {'domain-spec/schema-tx #'literals/schema-tx}}
+            (slurp (io/file filename)))))
 
-(defn load-schemas-ds [filename]
-  (clojure.edn/read-string
-    {:readers {'domain-spec/schema-tx-ds #'literals/schema-tx-ds}}
-    (slurp (io/file filename))))
+#?(:clj (defn load-schemas-ds [filename]
+          (clojure.edn/read-string
+            {:readers {'domain-spec/schema-tx-ds #'literals/schema-tx-ds}}
+            (slurp (io/file filename)))))
 
 (defn specs->db-schema-terse [specs]
   (vec
@@ -60,15 +61,15 @@
 
                 [(or doc "")]))))))))
 
-(defn spec-specs []
-  (c/read-resource "spec-spec.edn"))
+#?(:clj (defn spec-specs []
+          (c/read-resource "spec-spec.edn")))
 
-(defn new-specs-ds []
-  (->
-    (spec-specs)
-    specs->db-schema-terse
-    literals/schema-tx-ds
-    ds/create-conn))
+#?(:clj (defn new-specs-ds []
+          (->
+            (spec-specs)
+            specs->db-schema-terse
+            literals/schema-tx-ds
+            ds/create-conn)))
 
 (defn sort-specs [specs]
   (let [specs (for [spec specs]
@@ -93,6 +94,12 @@
      (for [m coll]
        [(key-fn m) (val-fn m)]))))
 
+(defn specs->map [coll]
+  (->> coll
+    (coll->map :entity/ns
+      (fn [ent]
+        (update ent :entity/attrs #(coll->map :attr/key %))))))
+
 (defn get-spec-map
   "pull all entity and associated attribute specs from a datascript datasource into a nested map"
   [specs-ds]
@@ -105,53 +112,53 @@
           (update ent :entity/attrs #(coll->map :attr/key %)))))))
 
 
-(defn get-schema [db attr]
-  (d/q '[:find [(pull ?e [:db/ident * {:db/unique [*]} {:db/cardinality [:db/ident]} {:db/valueType [:db/ident :fressian/tag]}]) ...]
-         :in $ ?attr
-         :where
-         [?e :db/ident ?attr]]
-    db attr))
+#?(:clj (defn get-db-schema [db attr]
+          (d/q '[:find [(pull ?e [:db/ident * {:db/unique [*]} {:db/cardinality [:db/ident]} {:db/valueType [:db/ident :fressian/tag]}]) ...]
+                 :in $ ?attr
+                 :where
+                 [?e :db/ident ?attr]]
+            db attr)))
 
-(defn get-schemas [db]
-  (let [system-ns #{"db" "db.type" "db.install" "db.part"
-                    "db.lang" "fressian" "db.unique" "db.excise"
-                    "db.cardinality" "db.fn" "db.sys" "db.alter" "db.bootstrap"
-                    "conformity"}]
-    (d/q '[:find [(pull ?e [:db/ident * {:db/unique [*]} {:db/cardinality [:db/ident]} {:db/valueType [:db/ident :fressian/tag]}]) ...]
-           :in $ ?system-ns
-           :where
-           [?e :db/ident ?ident]
-           [(namespace ?ident) ?ns]
-           [((comp not contains?) ?system-ns ?ns)]]
-      db system-ns)))
+#?(:clj (defn get-db-schemas [db]
+          (let [system-ns #{"db" "db.type" "db.install" "db.part"
+                            "db.lang" "fressian" "db.unique" "db.excise"
+                            "db.cardinality" "db.fn" "db.sys" "db.alter" "db.bootstrap"
+                            "conformity"}]
+            (d/q '[:find [(pull ?e [:db/ident * {:db/unique [*]} {:db/cardinality [:db/ident]} {:db/valueType [:db/ident :fressian/tag]}]) ...]
+                   :in $ ?system-ns
+                   :where
+                   [?e :db/ident ?ident]
+                   [(namespace ?ident) ?ns]
+                   [((comp not contains?) ?system-ns ?ns)]]
+              db system-ns))))
 
-(defn datomic->terse-schema [db]
-  (debug "datomic->simple-schema")
-  (let [schemas (get-schemas db)]
-    (for [{:keys [db/ident db/unique db/valueType db/cardinality db/doc db/index db/fulltext db/noHistory db/isComponent] :as sch} schemas]
-      (let [type   (keyword (name (:db/ident valueType)))
-            card   (-> cardinality :db/ident name keyword)
-            result [ident card type]]
+#?(:clj (defn datomic->terse-schema [db]
+          (debug "datomic->simple-schema")
+          (let [schemas (get-db-schemas db)]
+            (for [{:keys [db/ident db/unique db/valueType db/cardinality db/doc db/index db/fulltext db/noHistory db/isComponent] :as sch} schemas]
+              (let [type   (keyword (name (:db/ident valueType)))
+                    card   (-> cardinality :db/ident name keyword)
+                    result [ident card type]]
 
-        (cond-> result
+                (cond-> result
 
-          unique
-          (conj (-> unique :db/ident name keyword))
+                  unique
+                  (conj (-> unique :db/ident name keyword))
 
-          index
-          (conj :index)
+                  index
+                  (conj :index)
 
-          fulltext
-          (conj :fulltext)
+                  fulltext
+                  (conj :fulltext)
 
-          noHistory
-          (conj :noHistory)
+                  noHistory
+                  (conj :noHistory)
 
-          isComponent
-          (conj :component)
+                  isComponent
+                  (conj :component)
 
-          doc
-          (conj doc))))))
+                  doc
+                  (conj doc)))))))
 
 
 

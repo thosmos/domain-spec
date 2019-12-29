@@ -1,5 +1,5 @@
 {:deps
-        {org.clojure/clojure            {:mvn/version "1.10.0"},
+        {org.clojure/clojure            {:mvn/version "1.10.1"},
          clojure.java-time              {:mvn/version "0.3.1"},
          org.clojure/tools.logging      {:mvn/version "0.4.1"},
          ch.qos.logback/logback-classic {:mvn/version "1.2.3"},
@@ -9,6 +9,6 @@
          io.rkn/conformity              {:mvn/version "0.5.1"}
          datascript                     {:mvn/version "0.16.6"}}
 
- :paths ["src" "resources" "config"]
- }
+ :paths ["src" "resources" "config"]}
+
 
