@@ -19,15 +19,19 @@
                     {:attr/key         :entity/prnFn,
                      :attr/type        :string,
                      :attr/cardinality :one,
-                     :attr/doc         "a function with the entity as its arg for printing this entity"}
+                     :attr/doc         "a function with the entity as its arg, returning a string. Keys used must be in :entity/prKeys."}
                     {:attr/key         :entity/sortKeys,
                      :attr/type        :keyword,
                      :attr/cardinality :many,
                      :attr/doc         "a subset of this entity's attrs used to sort"}
-                    {:attr/key         :entity/summaryKeys,
+                    {:attr/key         :entity/prKeys,
                      :attr/type        :keyword,
                      :attr/cardinality :many,
                      :attr/doc         "a subset of this entity's attrs to display in a summary list"}
+                    {:attr/key         :entity/nameKey,
+                     :attr/type        :keyword,
+                     :attr/cardinality :one,
+                     :attr/doc         "a single attribute key used to display in a dropdown list"}
                     {:attr/key         :entity/pks,
                      :attr/type        :keyword,
                      :attr/cardinality :many,
@@ -50,7 +54,7 @@
                     {:attr/key         :entity/enumField,
                      :attr/type        :keyword,
                      :attr/cardinality :one,
-                     :attr/doc         "Declares this entity as an enum and the attr key to be used to generate the value of the enum, example -> {:sitevisittype/name 'QRT'} -> {:entity/EnumField :sitevisittype/name} => {:db/ident :sitevisittype/QRT}"}
+                     :attr/doc         "Declares this entity as an enum and the attr key to be used to generate the value of the enum. For example, given {:sitevisittype/name 'QRT'} -> {:entity/EnumField :sitevisittype/name} => {:db/ident :sitevisittype/QRT}"}
                     {:attr/key         :entity/lookup
                      :attr/type        :keyword,
                      :attr/cardinality :one,
@@ -150,4 +154,14 @@
                     {:attr/key         :attr/gql,
                      :attr/type        :string,
                      :attr/cardinality :one,
-                     :attr/doc         "A GraphQL-friendly attribute name"}]}]
+                     :attr/doc         "A GraphQL-friendly attribute name"}
+                    {:attr/key         :attr/refPrKey,
+                     :attr/type        :keyword,
+                     :attr/cardinality :one,
+                     :attr/doc         "A single key in the referenced entity type to use for display"}
+                    {:attr/key         :attr/refPrFn,
+                     :attr/type        :string,
+                     :attr/cardinality :one,
+                     :attr/doc         "A function that takes the referenced entity as its arg and produces a string"}]}]
+
+

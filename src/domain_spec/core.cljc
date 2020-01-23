@@ -86,6 +86,13 @@
             :where [?e :entity/ns]]
       @specs-ds)))
 
+#?(:clj (defn save-specs [filename specs]
+          (let [specs (if (vector? specs)
+                        specs
+                        (get-specs specs))]
+            (spit filename
+              (with-out-str (clojure.pprint/pprint (sort-specs specs)))))))
+
 (defn coll->map
   ([key-fn coll]
    (coll->map key-fn identity coll))

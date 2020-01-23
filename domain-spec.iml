@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Deps: org.clojure/clojure:1.10.0" level="project" />
+    <orderEntry type="library" name="Deps: org.clojure/clojure:1.10.1" level="project" />
     <orderEntry type="library" name="Deps: commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Deps: org.apache.tomcat/tomcat-juli:7.0.27" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/tools.logging:0.4.1" level="project" />
