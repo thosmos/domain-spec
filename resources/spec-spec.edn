@@ -159,6 +159,10 @@
                      :attr/type        :keyword,
                      :attr/cardinality :one,
                      :attr/doc         "A single key in the referenced entity type to use for display"}
+                    {:attr/key         :attr/enum,
+                     :attr/type        :boolean,
+                     :attr/cardinality :one,
+                     :attr/doc         "is this attribute a ref used as an enum?  each value entity should have a :db/ident"}
                     {:attr/key         :attr/refPrFn,
                      :attr/type        :string,
                      :attr/cardinality :one,

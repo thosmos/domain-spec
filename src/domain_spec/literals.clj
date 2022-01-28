@@ -101,7 +101,6 @@
         ident (:db/ident s-vec)
         type (:db/valueType s-vec)
         keys  [:db/unique
-               ;:db/ident
                :db/cardinality
                :db/index
                :db/fulltext
